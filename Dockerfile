@@ -1,5 +1,6 @@
 FROM nvidia/cuda:12.0.1-runtime-ubuntu22.04
 
+ENV SHELL=/bin/bash
 WORKDIR /app/
 
 RUN apt update && apt upgrade -y
