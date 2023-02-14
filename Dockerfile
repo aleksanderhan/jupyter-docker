@@ -5,12 +5,11 @@ WORKDIR /app/
 RUN apt update && apt upgrade -y
 
 # Install all OS dependencies for fully functional notebook server
-RUN apt-get update --yes && \
-    apt-get install --yes --no-install-recommends \
+RUN apt update --yes && \
+    apt install --yes --no-install-recommends \
     # Common useful utilities
     git \
     nano-tiny \
-    tzdata \
     unzip \
     vim-tiny \
 	python3-pip \
@@ -26,7 +25,9 @@ RUN apt-get update --yes && \
     texlive-plain-generic \
     # Enable clipboard on Linux host systems
     xclip && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt clean && rm -rf /var/lib/apt/lists/*
+
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt -y install tzdata		
 
 # Create alternative for nano -> nano-tiny
 RUN update-alternatives --install /usr/bin/nano nano /bin/nano-tiny 10
