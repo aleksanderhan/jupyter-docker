@@ -1,12 +1,47 @@
 FROM nvidia/cuda:12.0.1-runtime-ubuntu22.04
 
+WORKDIR /app/
+
 RUN apt update && apt upgrade -y
-RUN apt install jupyter -y
+
+# Install all OS dependencies for fully functional notebook server
+RUN apt-get update --yes && \
+    apt-get install --yes --no-install-recommends \
+    # Common useful utilities
+    git \
+    nano-tiny \
+    tzdata \
+    unzip \
+    vim-tiny \
+	python3-pip \
+    # git-over-ssh
+    openssh-client \
+    # less is needed to run help in R
+    # see: https://github.com/jupyter/docker-stacks/issues/1588
+    less \
+    # nbconvert dependencies
+    # https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex
+    texlive-xetex \
+    texlive-fonts-recommended \
+    texlive-plain-generic \
+    # Enable clipboard on Linux host systems
+    xclip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Create alternative for nano -> nano-tiny
+RUN update-alternatives --install /usr/bin/nano nano /bin/nano-tiny 10
+
+RUN pip3 install \
+	numpy \
+	torch \
+	torchvision \
+	torchaudio \
+	jupyterlab
 
 COPY jupyter_notebook_config.py /root/.jupyter/
 
 # Add Tini. Tini operates as a process subreaper for jupyter. This prevents kernel crashes.
-ADD https://github.com/krallin/tini/releases/download/v0.6.0/tini /usr/bin/tini
+ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini /usr/bin/tini
 RUN chmod +x /usr/bin/tini
 
 

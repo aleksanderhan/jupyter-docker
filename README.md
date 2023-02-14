@@ -12,6 +12,5 @@
 
 ## Run
 
-* Set password with `python set_password.py`
 * `docker build . --tag='jupyter'`
-* `docker run -d --restart=unless-stopped --gpus all -p 8888:8888 --name jupyter jupyter`
+* `docker run -d --restart=unless-stopped --gpus all -p 8888:8888 -e JUPYTER_TOKEN=<token> --name jupyter jupyter`
